@@ -16,7 +16,13 @@ class UserListItemVh(view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(user: User) {
         Glide.with(avatar).load(user.image).into(avatar)
-        title.text = "${user.firstName} ${user.lastName}"
+        title.text = this.itemView.context.getString(
+            R.string.vh_title,
+            user.firstName,
+            user.lastName,
+            user.age
+        )
+
         subtitle.text = user.university
     }
 }

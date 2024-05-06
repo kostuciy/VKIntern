@@ -1,6 +1,5 @@
 package com.vk.usersapp.feature.feed.presentation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vk.usersapp.core.MVIFeature
@@ -71,7 +70,6 @@ class UserListFeature : MVIFeature, ViewModel() {
                 }
                 submitAction(UserListAction.UsersLoaded(users))
             } catch (e: Exception) {
-                Log.e("DIMAA", e.toString())
                 submitAction(UserListAction.LoadError(e.message ?: "FATAL"))
             }
         }

@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">UsersApp</string>
+    <string name="app_name" translatable="false">UsersApp</string>
     <string name="nothing_found">Nothing found</string>
+    <string name="vh_title">%1$s %2$s, %3$d y.o.</string>
 </resources>
