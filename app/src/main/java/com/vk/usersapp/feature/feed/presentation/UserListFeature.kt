@@ -4,12 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vk.usersapp.core.MVIFeature
 import com.vk.usersapp.feature.feed.api.UsersRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 // MVI:
 //         Action                 patch, state                  newState                            viewState
@@ -21,14 +23,16 @@ import kotlinx.coroutines.withContext
 //          |            v
 //          |-------- Feature
 
-class UserListFeature : MVIFeature, ViewModel() {
+@HiltViewModel
+class UserListFeature @Inject constructor(
+    private val usersRepository: UsersRepository
+) : MVIFeature, ViewModel() {
     private val mutableViewStateFlow = MutableStateFlow<UserListViewState>(UserListViewState.Loading)
     val viewStateFlow: StateFlow<UserListViewState> = mutableViewStateFlow.asStateFlow()
 
     private var state: UserListState = UserListState()
 
-    private val reducer = UserListReducer()
-    private val usersRepository = UsersRepository()
+    @Inject lateinit var reducer: UserListReducer
 
     fun submitAction(action: UserListAction) {
         state = reducer.applyAction(action, state)
