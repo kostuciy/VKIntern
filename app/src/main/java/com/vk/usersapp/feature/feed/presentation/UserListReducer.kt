@@ -1,6 +1,8 @@
 package com.vk.usersapp.feature.feed.presentation
 
-class UserListReducer {
+import javax.inject.Inject
+
+class UserListReducer @Inject constructor() {
     fun applyAction(action: UserListAction, state: UserListState): UserListState {
         return when (action) {
             UserListAction.Init -> state.copy(isLoading = true)

@@ -1,10 +1,13 @@
 package com.vk.usersapp.feature.feed.api
 
-import com.vk.usersapp.core.Retrofit
 import com.vk.usersapp.feature.feed.model.User
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class UsersRepository {
-    private val api: UsersApi by lazy { Retrofit.getClient().create(UsersApi::class.java) }
+@Singleton
+class UsersRepository @Inject constructor(
+    private val api: UsersApi
+) {
 
     suspend fun getUsers(): List<User> {
         return api.getUsers(

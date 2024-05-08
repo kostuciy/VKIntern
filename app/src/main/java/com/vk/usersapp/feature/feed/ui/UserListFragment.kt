@@ -1,5 +1,6 @@
 package com.vk.usersapp.feature.feed.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,22 +9,22 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.isVisible
-import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.vk.usersapp.R
-import com.vk.usersapp.core.ViewModelProvider
 import com.vk.usersapp.core.asFlow
 import com.vk.usersapp.feature.feed.presentation.UserListAction
 import com.vk.usersapp.feature.feed.presentation.UserListFeature
 import com.vk.usersapp.feature.feed.presentation.UserListViewState
-import kotlinx.coroutines.flow.collect
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class UserListFragment : Fragment() {
 
     val adapter: UserListAdapter by lazy { UserListAdapter() }
@@ -32,12 +33,13 @@ class UserListFragment : Fragment() {
     var errorView: TextView? = null
     var loaderView: ProgressBar? = null
 
-    var feature: UserListFeature? = null
+    private val feature: UserListFeature by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return LayoutInflater.from(requireContext()).inflate(R.layout.fr_user_list, container, false)
     }
 
+    @SuppressLint("UnsafeRepeatOnLifecycleDetector")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recycler = view.findViewById(R.id.recycler)
         queryView = view.findViewById(R.id.search_input)
@@ -46,31 +48,24 @@ class UserListFragment : Fragment() {
         recycler?.adapter = adapter
         recycler?.layoutManager = LinearLayoutManager(view.context)
 
-        feature = ViewModelProvider.obtainFeature {
-            UserListFeature()
-        }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                feature?.viewStateFlow?.collect {
-                    renderState(it)
+                launch {
+                    feature.viewStateFlow.collect {
+                        renderState(it)
+                    }
                 }
-                queryView?.asFlow()?.collect {
-                    feature?.submitAction(UserListAction.QueryChanged(it))
+
+                launch {
+                    queryView?.asFlow()?.collect {
+                        feature.submitAction(UserListAction.QueryChanged(it))
+                    }
                 }
             }
         }
 
-        feature?.submitAction(UserListAction.Init)
-    }
-
-    override fun onDestroy() {
-        feature?.let {
-            if (activity?.isFinishing == true) {
-                ViewModelProvider.destroyFeature(it.javaClass)
-            }
-        }
-        super.onDestroy()
+        feature.submitAction(UserListAction.Init)
     }
 
     private fun renderState(viewState: UserListViewState) {

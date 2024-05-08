@@ -27,7 +27,7 @@
         app:layout_constraintStart_toEndOf="@id/photo"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="George Russell" />
+        tools:text="George Russell, 27 y.o." />
 
     <TextView
         android:id="@+id/subtitle"
