@@ -25,14 +25,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserListFeature @Inject constructor(
-    private val usersRepository: UsersRepository
+    private val usersRepository: UsersRepository,
+    private val reducer: UserListReducer
 ) : MVIFeature, ViewModel() {
     private val mutableViewStateFlow = MutableStateFlow<UserListViewState>(UserListViewState.Loading)
     val viewStateFlow: StateFlow<UserListViewState> = mutableViewStateFlow.asStateFlow()
 
     private var state: UserListState = UserListState()
-
-    @Inject lateinit var reducer: UserListReducer
 
     fun submitAction(action: UserListAction) {
         state = reducer.applyAction(action, state)

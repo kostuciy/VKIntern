@@ -1,5 +1,6 @@
 package com.vk.usersapp.feature.feed.api
 
+import com.vk.usersapp.core.Retrofit
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Before
@@ -8,10 +9,11 @@ import kotlin.random.Random
 
 class UsersRepositoryTest {
     private lateinit var usersRepository: UsersRepository
+    private val api: UsersApi = Retrofit.getClient().create(UsersApi::class.java)
 
     @Before
     fun setup() {
-        usersRepository = UsersRepository()
+        usersRepository = UsersRepository(api)
     }
 
 //    Calling getUsers() should return non-empty list with 30 or less users

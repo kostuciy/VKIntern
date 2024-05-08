@@ -1,5 +1,8 @@
 package com.vk.usersapp.feature.feed.presentation
 
+import com.vk.usersapp.core.Retrofit
+import com.vk.usersapp.feature.feed.api.UsersApi
+import com.vk.usersapp.feature.feed.api.UsersRepository
 import com.vk.usersapp.feature.feed.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,11 +21,14 @@ class UserListFeatureTest {
         45, "image", "SPbPU"
     )
     private lateinit var userListFeature: UserListFeature
+    private val api: UsersApi = Retrofit.getClient().create(UsersApi::class.java)
+    private val reducer = UserListReducer()
+    private val repository = UsersRepository(api)
 
     @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        userListFeature = UserListFeature()
+        userListFeature = UserListFeature(repository, reducer)
     }
 
     @After
